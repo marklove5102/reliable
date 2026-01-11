@@ -2402,7 +2402,8 @@ void test_sequence_buffer_rollover()
     int i;
     for (i = 0; i <= 32767; ++i)
     {
-        int packet_bytes = 16 / sizeof( uint8_t );
+        uint8_t packet_data[16] = {0};
+        int packet_bytes = sizeof( packet_data ) / sizeof( uint8_t );
         reliable_endpoint_next_packet_sequence( context.sender );
         reliable_endpoint_send_packet( context.sender, packet_data, packet_bytes );
 
