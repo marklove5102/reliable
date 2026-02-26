@@ -1068,6 +1068,19 @@ void reliable_store_fragment_data( struct reliable_fragment_reassembly_data_t * 
         reassembly_data->packet_bytes = ( reassembly_data->num_fragments_total - 1 ) * fragment_size + fragment_bytes;
     }
 
+    size_t offset = RELIABLE_MAX_PACKET_HEADER_BYTES + fragment_id * fragment_size;
+    size_t end_offset = offset + fragment_bytes;
+    size_t max_size = RELIABLE_MAX_PACKET_HEADER_BYTES +
+                      reassembly_data->num_fragments_total * fragment_size;
+
+    if (fragment_bytes < 0 || end_offset > max_size)
+    {
+        reliable_printf(RELIABLE_LOG_LEVEL_ERROR,
+            "[reliable] invalid fragment size %d (would write past %zu/%zu)\n",
+            fragment_bytes, end_offset, max_size);
+        return;
+    }
+    
     memcpy( reassembly_data->packet_data + RELIABLE_MAX_PACKET_HEADER_BYTES + fragment_id * fragment_size, fragment_data, fragment_bytes );
 }
 
